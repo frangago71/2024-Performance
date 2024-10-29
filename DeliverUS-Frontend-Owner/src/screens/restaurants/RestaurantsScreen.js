@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet, FlatList, Pressable, View } from 'react-native'
-
 import { getAll, remove } from '../../api/RestaurantEndpoints'
 import ImageCard from '../../components/ImageCard'
 import TextSemiBold from '../../components/TextSemibold'
@@ -39,7 +38,18 @@ export default function RestaurantsScreen ({ navigation, route }) {
         {item.averageServiceMinutes !== null &&
           <TextSemiBold>Avg. service time: <TextSemiBold textStyle={{ color: GlobalStyles.brandPrimary }}>{item.averageServiceMinutes} min.</TextSemiBold></TextSemiBold>
         }
-        <TextSemiBold>Shipping: <TextSemiBold textStyle={{ color: GlobalStyles.brandPrimary }}>{item.shippingCosts.toFixed(2)}€</TextSemiBold></TextSemiBold>
+
+        {/* Solution */}
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}} >
+            <TextSemiBold>Shipping: <TextSemiBold textStyle={{ color: GlobalStyles.brandPrimary }}>{item.shippingCosts.toFixed(2)}€</TextSemiBold></TextSemiBold>
+          {item.performances.length !== 0 &&
+            <TextRegular textStyle={[styles.badge, {color: GlobalStyles.brandPrimary, borderColor: GlobalStyles.brandSuccess}]}>
+              ¡Próxima actuación!
+            </TextRegular>
+          }
+        </View>
+        
+
         <View style={styles.actionButtonsContainer}>
           <Pressable
             onPress={() => navigation.navigate('EditRestaurantScreen', { id: item.id })
@@ -77,6 +87,27 @@ export default function RestaurantsScreen ({ navigation, route }) {
             </TextRegular>
           </View>
         </Pressable>
+
+        { /*Solution*/ }
+        <Pressable
+            onPress={() => navigation.navigate('CreatePerformanceScreen', { id: item.id })
+            }
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed
+                  ? GlobalStyles.brandSuccessTap
+                  : GlobalStyles.brandSuccess
+              },
+              styles.actionButton
+            ]}>
+          <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center' }]}>
+            <MaterialCommunityIcons name='octagram' color={'white'} size={20}/>
+            <TextRegular textStyle={styles.text}>
+              Nueva actuación
+            </TextRegular>
+          </View>
+        </Pressable>
+
         </View>
       </ImageCard>
     )
@@ -195,7 +226,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: 'center',
     flexDirection: 'column',
-    width: '50%'
+    width: '33%'
   },
   actionButtonsContainer: {
     flexDirection: 'row',
@@ -212,5 +243,12 @@ const styles = StyleSheet.create({
   emptyList: {
     textAlign: 'center',
     padding: 50
+  },
+  // Solution
+  badge: {
+    textAlign: 'center',
+    borderWidth: 2,
+    paddingHorizontal: 10,
+    borderRadius: 10
   }
 })
